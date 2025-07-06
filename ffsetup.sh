@@ -7,7 +7,7 @@ die() { # Print error and exit
     exit 1
 }
 
-which firefox >/dev/null 2>&1 || { die "Firefox is not installed!" }
+which firefox >/dev/null 2>&1 || die "Firefox is not installed!"
 
 echo "A Firefox setup script"
 printf "\nStarting Firefox...\n"
@@ -18,16 +18,16 @@ sleep 3
 pkill "firefox"
 
 # Grab profile
-profile="$HOME/.mozilla/firefox/$(grep "Default=.*\.default-release" $HOME/.mozilla/firefox/profiles.ini | sed "s/Default=//")"
+profile="$HOME/.mozilla/firefox/$(grep "Default=.*\.default-release" "$HOME/.mozilla/firefox/profiles.ini" | sed "s/Default=//")"
 [ ! -d "$profile" ] && die "Could not create/fetch Firefox profile"
 
 # Install Betterfox user.js
 echo "Installing Betterfox user.js..."
-curl -sL "https://raw.githubusercontent.com/arkenfox/user.js/master/user.js" > "$profile/user.js"
+curl -sL "https://raw.githubusercontent.com/YuuMurasaki/ffsetup/refs/heads/master/user.js" > "$profile/user.js"
 
 # Create temp directory
 tempff="$(mktemp -d)"
-trap "rm -rf $tempff" HUP INT QUIT TERM PWR EXIT
+trap 'rm -rf "$tempff"' HUP INT QUIT TERM PWR EXIT
 
 # Install extensions
 echo "Installing browser extensions..."
