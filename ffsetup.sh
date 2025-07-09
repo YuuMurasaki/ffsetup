@@ -7,6 +7,9 @@ die() { # Print error and exit
     exit 1
 }
 
+# Check if script is run as root
+[ "$(id -u)" -eq 0 ] && die "Do NOT run script as root!"
+
 which firefox >/dev/null 2>&1 || die "Firefox is not installed!"
 
 echo "A Firefox setup script"
@@ -18,7 +21,7 @@ sleep 3
 pkill "firefox"
 
 # Grab profile
-profile="$HOME/.mozilla/firefox/$(grep "Default=.*\.default-release" "$HOME/.mozilla/firefox/profiles.ini" | sed "s/Default=//")"
+profile="$HOME/.mozilla/firefox/$(grep "Default=.*\.default-release" $HOME/.mozilla/firefox/profiles.ini | sed "s/Default=//")"
 [ ! -d "$profile" ] && die "Could not create/fetch Firefox profile"
 
 # Install Betterfox user.js
@@ -31,22 +34,21 @@ trap 'rm -rf "$tempff"' HUP INT QUIT TERM PWR EXIT
 
 # Install extensions
 echo "Installing browser extensions..."
-extensions="ublock-origin decentraleyes clearurls noscript"
+extensions="ublock-origin decentraleyes clearurls"
 IFS=' '
 mkdir "$profile/extensions/"
 for x in $extensions; do
-    extensionurl="$(curl -sL "https://addons.mozilla.org/en-US/firefox/addon/${x}/" | grep -o 'https://addons.mozilla.org/firefox/downloads/file/[^"]*')"
-    file="${extensionurl##*/}"
-    curl -sL "$extensionurl" > "$tempff/$file"
-    id="$(unzip -p "$tempff/$file" manifest.json | grep "\"id\"")"
-    id="${id%\"*}"
-    id="${id##*\"}"
-    mv "$tempff/$file" "$profile/extensions/$id.xpi" || die "Could not install an extension correctly"
+	extensionurl="$(curl -sL "https://addons.mozilla.org/en-US/firefox/addon/${x}/" | grep -o 'https://addons.mozilla.org/firefox/downloads/file/[^"]*')"
+	file="${extensionurl##*/}"
+	curl -sL "$extensionurl" > "$tempff/$file"
+	id="$(unzip -p "$tempff/$file" manifest.json | grep "\"id\"")"
+	id="${id%\"*}"
+	id="${id##*\"}"
+	mv "$tempff/$file" "$profile/extensions/$id.xpi" || die "Could not install an extension correctly"
 done
 
 # Enable extensions
 echo "Enabling extensions..."
-
 # Generate extensions.json
 firefox --headless >/dev/null 2>&1 &
 sleep 10

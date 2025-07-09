@@ -262,9 +262,6 @@ user_pref("browser.newtabpage.activity-stream.showWeather", false);
 // PREF: hide dropdown suggestions when clicking on the address bar
 user_pref("browser.urlbar.suggest.topsites", false);
 
-// PREF: ask where to save every file
-user_pref("browser.download.useDownloadDir", false);
-
 // PREF: delete all browsing data on shutdown
 user_pref("privacy.sanitize.sanitizeOnShutdown", true);
 user_pref("privacy.clearOnShutdown_v2.cache", true);
@@ -276,6 +273,10 @@ user_pref("privacy.clearOnShutdown_v2.formdata", true);
 // PREF: after crashes or restarts, do not save extra session data
 // such as form content, scrollbar positions, and POST data
 user_pref("browser.sessionstore.privacy_level", 2);
+
+// PREF: disable feedback reporting
+user_pref("browser.chrome.toolbar_tips", false);
+user_pref("extensions.abuseReport.enabled", false);
 
 /****************************************************************************
  * SECTION: SMOOTHFOX                                                       *
